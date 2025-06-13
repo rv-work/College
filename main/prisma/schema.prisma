@@ -1,0 +1,362 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  admissionNumber String   @id @unique
+  name            String
+  email           String   @unique
+  username        String   @unique
+  mobile          String?
+  password        String
+  year            String
+  branch          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime
+  profilePicture  String?
+  bio             String?
+  contest         Int?
+  rating          Int?
+  rank            Int?
+  isStudent       Boolean  @default(true)
+  quize           Quize[]
+
+  eventsHosted      Event[]
+  eventJoined       UserRegister[]
+  classroomHosted   Classroom[]
+  classroomJoined   ClassroomConnect[]
+  questionsSolved   QuestionConnect[]
+  contributions     Contribution[]
+  markedForRevision QuestionRevisionConnect[]
+  comments          Comment[]
+  replies           Reply[]
+
+  reports           Report[]
+}
+
+model Quize {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [admissionNumber])
+  userId    String
+  maxScore  Int
+  score     Int
+  timeTaken String
+  topic     String
+  createdAt DateTime @default(now())
+}
+
+model Contribution {
+  id            String     @id @default(cuid())
+  contributor   User       @relation(fields: [contributorId], references: [admissionNumber])
+  contributorId String
+  aktu          DateTime[]
+  st            DateTime[]
+  youtube       DateTime[]
+  notes         DateTime[]
+  ppt           DateTime[]
+  createdAt     DateTime   @default(now())
+}
+
+model Registration {
+  id              String         @id @default(uuid())
+  teamName        String
+  eventId         String
+  name            String
+  email           String
+  admissionNumber String
+  branch          String
+  mobile          String
+  teamMembers     UserRegister[]
+  isTeam          Boolean
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  event           Event          @relation(fields: [eventId], references: [id])
+}
+
+model UserRegister {
+  id         String       @id @default(cuid())
+  userId     String
+  registerId String
+  user       User         @relation(fields: [userId], references: [admissionNumber])
+  register   Registration @relation(fields: [registerId], references: [id])
+
+  @@unique([userId, registerId])
+}
+
+model Event {
+  id            String          @id @default(cuid())
+  owner         User            @relation(fields: [ownerId], references: [admissionNumber])
+  ownerId       String
+  title         String
+  description   String
+  detail        String
+  startTime     DateTime
+  banner        String
+  category      String
+  domain        String
+  team          Int
+  priceSolo     Int
+  priceTeam     Int?
+  faq           FAQ[]
+  sponsors      String[]
+  prize         Prize[]
+  organizedBy   String
+  Tags          String[]
+  photos        String[]
+  helpEmail     String
+  timeLines     EventTimeLine[]
+  location      String
+  status        String
+  isApproved    Boolean         @default(false)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now()) @updatedAt
+  isDone        Boolean         @default(false)
+  registrations Registration[]
+  comments      Comment[]
+}
+
+model Prize {
+  id       String @id @default(cuid())
+  event    Event  @relation(fields: [eventId], references: [id])
+  eventId  String
+  position Int
+  message  String
+  amount   Int?
+}
+
+model EventTimeLine {
+  id         String   @id @default(cuid())
+  event      Event    @relation(fields: [eventId], references: [id])
+  eventId    String
+  heading    String
+  subheading String
+  time       DateTime
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  comment   String
+  event     Event    @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [admissionNumber])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  replies   Reply[]
+}
+
+model Reply {
+  id           String   @id @default(cuid())
+  commentId    String
+  userId       String
+  replyContent String
+  comment      Comment  @relation(fields: [commentId], references: [id])
+  user         User     @relation(fields: [userId], references: [admissionNumber])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([commentId])
+  @@index([userId])
+}
+
+model Classroom {
+  id           String             @id @default(cuid())
+  owner        User               @relation(fields: [ownerId], references: [admissionNumber])
+  ownerId      String
+  title        String
+  description  String
+  detail       String
+  banner       String?
+  startTime    DateTime
+  status       String
+  isStarted    Boolean            @default(false)
+  isDone       Boolean            @default(false)
+  participants ClassroomConnect[]
+  roomId       String             @unique
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @default(now()) @updatedAt
+}
+
+model ClassroomConnect {
+  id      String    @id @default(cuid())
+  userId  String
+  classId String
+  user    User      @relation(fields: [userId], references: [admissionNumber])
+  class   Classroom @relation(fields: [classId], references: [id])
+
+  @@unique([userId, classId])
+}
+
+model Sheet {
+  id    String  @id @default(cuid())
+  topic String
+  level Level[]
+}
+
+model Level {
+  id        String     @id @default(cuid())
+  name      String
+  questions Question[]
+  sheet     Sheet      @relation(fields: [sheetId], references: [id])
+  sheetId   String
+}
+
+model Question {
+  id                String                    @id @default(cuid())
+  quesNo            Int                       @unique
+  title             String
+  slug              String                    @unique
+  description       String
+  difficulty        String
+  cases             Case[]
+  solvedBy          QuestionConnect[]
+  markForRevisionBY QuestionRevisionConnect[]
+  leetcode          String
+  points            Int
+  level             Level                     @relation(fields: [levelId], references: [id])
+  levelId           String
+  constraint        String
+  tags              String[]
+  templateCode      TemplateCode?
+  wrapperCode       WrapperCode?
+  reportedBy        Report[]
+}
+
+model Report {
+  id                String   @id @default(cuid())
+  question          Question @relation(fields: [questionId], references: [id])
+  questionId        String
+  ss                String[]
+  message           String
+  createdAt         DateTime @default(now())
+  user              User     @relation(fields: [userId], references: [admissionNumber])
+  userId            String
+}
+
+model TemplateCode {
+  questionId String   @id
+  question   Question @relation(fields: [questionId], references: [id])
+  Python     String
+  Java       String
+  Cpp        String
+}
+
+model WrapperCode {
+  questionId String   @id
+  question   Question @relation(fields: [questionId], references: [id])
+  Python     String
+  Java       String
+  Cpp        String
+}
+
+model QuestionConnect {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [admissionNumber])
+  question   Question @relation(fields: [questionId], references: [id])
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, questionId])
+}
+
+model QuestionRevisionConnect {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String
+  user       User     @relation(fields: [userId], references: [admissionNumber])
+  question   Question @relation(fields: [questionId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, questionId])
+}
+
+model Case {
+  id          String   @id @default(cuid())
+  caseNumber  Int
+  input       String[]
+  output      String
+  explanation String?
+  question    Question @relation(fields: [questionId], references: [id])
+  questionId  String
+}
+
+model Branch {
+  id    String @id @default(cuid())
+  name  String
+  years Year[]
+}
+
+model Year {
+  id       String    @id @default(cuid())
+  number   Int
+  branch   Branch    @relation(fields: [branchId], references: [id])
+  branchId String
+  subjects Subject[]
+}
+
+model Subject {
+  id     String @id @default(cuid())
+  name   String
+  code   String
+  year   Year   @relation(fields: [yearId], references: [id])
+  yearId String
+  units  Unit[]
+  sts    ST[]
+  aktus  AKTU[]
+}
+
+model Unit {
+  id        String   @id @default(cuid())
+  name      String
+  number    Int
+  topics    String[]
+  youtube   String[]
+  notes     String[]
+  ppt       String[]
+  important String[]
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+  subjectId String
+}
+
+model ST {
+  id        String  @id @default(cuid())
+  year      Int
+  semester  String
+  papers    Paper[]
+  subject   Subject @relation(fields: [subjectId], references: [id])
+  subjectId String
+}
+
+model Paper {
+  id   String @id @default(cuid())
+  name String
+  file String
+  st   ST     @relation(fields: [stId], references: [id])
+  stId String
+}
+
+model AKTU {
+  id        String  @id @default(cuid())
+  year      Int
+  file      String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+  subjectId String
+}
