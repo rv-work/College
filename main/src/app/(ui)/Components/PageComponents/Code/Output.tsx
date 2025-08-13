@@ -2,10 +2,7 @@ import React from 'react';
 import { Clock } from 'lucide-react';
 
 interface TestResult {
-  input: {
-    'nums ': string;
-    'target ': string;
-  };
+  input: string
   output: string;
   result: {
     stdout: string | null;
@@ -16,8 +13,8 @@ interface TestResult {
     compile_output: null | string;
     message: null | string;
     status: {
-      id : number;
-      description : string
+      id: number;
+      description: string
     }
   };
 }
@@ -29,22 +26,42 @@ interface OutputProps {
 }
 
 const Output: React.FC<OutputProps> = ({ darkMode, output, outPutMsg }) => {
-
   const getActualOutput = (actual: string | null) => {
     return actual === null ? "No output" : actual;
   };
 
+  // Helper function to properly format input/output values
+  const formatValue = (value: string) => {
+    try {
+      // Try to parse as JSON first to handle arrays, objects, etc.
+      const parsed = JSON.parse(value);
+      return JSON.stringify(parsed);
+    } catch {
+      // If it's not valid JSON, return as-is (for simple strings/numbers)
+      return value;
+    }
+  };
+
+  console.log("output : ", output);
+
   const renderTestResults = () => {
     if (Array.isArray(output)) {
       return (
-
         <div className="space-y-4">
           <h4 className="font-medium">Test Results:</h4>
           {output.map((testCase, index) => (
             <div key={index} className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'} mb-2`}>
               <p className="mb-1"><span className="font-medium">Test {index + 1}:</span></p>
-              <p className="mb-1"><span className="font-medium">Input:</span> nums = {testCase.input['nums ']}, target = {testCase.input['target ']}</p>
-              <p className="mb-1"><span className="font-medium">Expected:</span> {testCase.output}</p>
+              <p className="mb-1">
+                <span className="font-medium">Input:</span>
+                {Object.entries(testCase.input).map(([key, value], idx) => (
+                  <span key={idx}>
+                    {idx > 0 && ', '}
+                    {key.trim()}: {formatValue(value)}
+                  </span>
+                ))}
+              </p>
+              <p className="mb-1"><span className="font-medium">Expected:</span> {formatValue(testCase.output)}</p>
               <p className="mb-1"><span className="font-medium">Your Output:</span> {getActualOutput(testCase.result.stdout)}</p>
               <p className={`font-medium ${testCase.result.status.description === 'Accepted' ? 'text-green-500' : 'text-red-500'}`}>
                 {testCase.result.status.description === 'Accepted' ? 'Passed' : 'Failed'}
@@ -58,7 +75,6 @@ const Output: React.FC<OutputProps> = ({ darkMode, output, outPutMsg }) => {
         </div>
       );
     }
-    
     return <pre className="whitespace-pre-wrap overflow-y-auto max-h-36">{outPutMsg || "Run your code to see the output here..."}</pre>;
   };
 

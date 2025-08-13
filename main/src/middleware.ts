@@ -25,6 +25,8 @@ export async function middleware(req: NextRequest) {
     const decoded = await verifyToken(token);
 
     const requestHeaders = new Headers(req.headers);
+
+    
     requestHeaders.set("userId", decoded.id as string);
     console.log("middle")
 
@@ -38,6 +40,8 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 }
+
+
 export const config = {
   matcher: ["/profile", "/my-events" , "/class/:path*", "/api/host/:path*" , "/api/event/:path*" , "/api/profile/:path*" , "/api/dsa/:path*" , "/api/source/:path*" , "/api/quize"],
 };
