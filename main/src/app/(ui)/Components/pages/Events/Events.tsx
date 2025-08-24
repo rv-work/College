@@ -18,7 +18,7 @@ interface EventData {
     name: string;
   };
   roomId?: string;
-  type? : string
+  type?: string
   banner: string;
   domain?: string;
   helpEmail?: string;
@@ -69,10 +69,10 @@ const Events: React.FC = () => {
     try {
       const response = await axios.post("/api/event/fetchAll", {
         eventCategory: category,
-      });
+      }, { withCredentials: true });
       if (response.data.success) {
         setEventsData(response.data.data);
-        console.log("data , " , eventsData)
+        console.log("data , ", eventsData)
         setActiveCategory(category);
       } else {
         console.error("Event fetch failed:", response.data.message);
@@ -142,26 +142,26 @@ const Events: React.FC = () => {
 
       <div className="container mx-auto px-4 pb-4">
         <div className="flex justify-end mb-6">
-        <Link
-          href="/events/host"
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-400 to-blue-700 text-white font-semibold px-6 py-4 rounded-full shadow-lg hover:scale-105 transform transition-all duration-300"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
+          <Link
+            href="/events/host"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-400 to-blue-700 text-white font-semibold px-6 py-4 rounded-full shadow-lg hover:scale-105 transform transition-all duration-300"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Host an Event or Class
-        </Link>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            Host an Event or Class
+          </Link>
 
         </div>
       </div>
@@ -173,9 +173,8 @@ const Events: React.FC = () => {
             {eventCategories.map((item) => (
               <div
                 key={item.category}
-                className={`bg-gradient-to-br ${item.color} p-6 rounded-xl shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-2 border border-opacity-20 ${
-                  activeCategory === item.category ? "ring-2 ring-white ring-opacity-60 scale-105" : "border-gray-700"
-                }`}
+                className={`bg-gradient-to-br ${item.color} p-6 rounded-xl shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-2 border border-opacity-20 ${activeCategory === item.category ? "ring-2 ring-white ring-opacity-60 scale-105" : "border-gray-700"
+                  }`}
                 onClick={() => handleCardClick(item.category)}
               >
                 <div className="flex flex-col items-center">

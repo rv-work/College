@@ -7,16 +7,16 @@ import React from 'react';
 
 interface ClassRoomProps {
   roomId: string;
-  isHost : boolean
+  isHost: boolean
 
 }
 
-const Classroom: React.FC<ClassRoomProps> = ({ roomId , isHost}) => {
+const Classroom: React.FC<ClassRoomProps> = ({ roomId, isHost }) => {
 
 
-  return (  
+  return (
     <div>
-      <Class  roomId={roomId} isHost={isHost}  />
+      <Class roomId={roomId} isHost={isHost} />
     </div>
   )
 }

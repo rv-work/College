@@ -7,6 +7,11 @@ export async function POST(req: NextRequest) {
   try {
     const { code, language, wrapCode, testCases } = await req.json();
 
+    interface TestCase {
+      input: string[];
+      output: string;
+    }
+
     const languageMap: Record<string, number> = {
       Java: 62,
       Cpp: 54,
@@ -18,49 +23,116 @@ export async function POST(req: NextRequest) {
       throw new Error("Unsupported language selected.");
     }
 
-    // Prepare all submissions first
-    const submissionsPayload = testCases.map((tc: { input: string[], output: string }) => {
+    const formatArrayValue = (value: string, lang: string): string => {
+      if (!value || value === "null" || value === "undefined") {
+        return "";
+      }
+
+      if (!value.startsWith("[") || !value.endsWith("]")) {
+        return value;
+      }
+
+      const content = value.slice(1, -1);
+
+      if (lang === "Python") {
+        return `[${content}]`;
+      } else if (lang === "Java") {
+        return `{${content}}`;
+      } else if (lang === "Cpp") {
+        return `{${content}}`;
+      }
+
+      return value;
+    };
+
+    // Use the same enhanced normalize output as run endpoint
+    const normalizeOutputArray = (output: string): string[] => {
+      if (!output) return [];
+
+      return output
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line && line !== "null" && line !== "undefined");
+    };
+
+    // Use the same compare outputs logic as run endpoint
+    const compareOutputs = (actual: string, expected: string): boolean => {
+      const actualLines = normalizeOutputArray(actual);
+      const expectedLines = normalizeOutputArray(expected);
+
+      if (actualLines.length !== expectedLines.length) return false;
+
+      return actualLines.every((actualLine, idx) => {
+        const expectedLine = expectedLines[idx];
+
+        // Handle "or" cases for random outputs
+        if (expectedLine.includes(" or ")) {
+          const validOptions = expectedLine
+            .split(" or ")
+            .map((opt) => opt.trim());
+          return validOptions.includes(actualLine);
+        }
+
+        return actualLine === expectedLine;
+      });
+    };
+
+    // Process ALL test cases for submit (unlike run which only processes first 2)
+    const submissionsPayload = (testCases as TestCase[]).map((tc: TestCase) => {
       const inputObject = Object.fromEntries(
-        tc.input.reduce((acc: [string, string][], val: string, index: number) => {
-          if (index % 2 === 0) {
-            acc.push([val, tc.input[index + 1]]);
-          }
-          return acc;
-        }, [])
+        tc.input.reduce(
+          (acc: [string, string][], val: string, index: number) => {
+            if (index % 2 === 0 && index + 1 < tc.input.length) {
+              const key = (val || "").trim();
+              const value = tc.input[index + 1] || "";
+
+              if (
+                key &&
+                value !== null &&
+                value !== undefined &&
+                value !== "null" &&
+                value !== "undefined"
+              ) {
+                acc.push([key, value]);
+              }
+            }
+            return acc;
+          },
+          []
+        )
       );
 
-      let finalSourceCode = wrapCode;
+      let finalSourceCode = wrapCode || "";
 
       Object.entries(inputObject).forEach(([key, val]) => {
-        let value = val;
-        if (
-          value.startsWith("[") &&
-          value.endsWith("]") &&
-          language_id !== 71
-        ) {
-          value = value.replace("[", "{").replace("]", "}");
-        }
+        const formattedValue = formatArrayValue(val, language) || "";
+        const placeholder = `{${key}}`;
+        const regexPattern = placeholder.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         finalSourceCode = finalSourceCode.replace(
-          new RegExp(`{${key.trim()}}`),
-          value
+          new RegExp(regexPattern, "g"),
+          formattedValue
         );
       });
 
       const source_code =
-        language_id !== 71
-          ? `${finalSourceCode}\n${code}`
-          : `${code}\n${finalSourceCode}`;
+        language_id === 71
+          ? `${code}\n${finalSourceCode}`
+          : `${finalSourceCode}\n${code}`;
 
       return {
         language_id,
         source_code,
-        expected_output: tc.output,
+        expected_output: tc.output?.trim() || "", // Keep original expected output
         cpu_time_limit: 2,
         memory_limit: 128000,
       };
     });
 
-    // Send batch request
+    interface SubmissionResponse {
+      token: string;
+      [key: string]: unknown;
+    }
+
     const submissionRes = await axios.post(
       `${JUDGE0_API}/submissions/batch?base64_encoded=false&wait=false`,
       { submissions: submissionsPayload },
@@ -73,19 +145,29 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    type SubmissionResponse = { token: string };
-    const tokens: string[] = (submissionRes.data as SubmissionResponse[]).map((sub) => sub.token);
-
+    const tokens: string[] = (submissionRes.data as SubmissionResponse[]).map(
+      (sub) => sub.token
+    );
 
     interface Judge0SubmissionResult {
-      status: { id: number; [key: string]: unknown };
+      status: { id: number; description: string };
+      stdout: string | null;
+      stderr: string | null;
+      compile_output: string | null;
+      time: string;
+      memory: number;
       [key: string]: unknown;
     }
 
     let resultsData: Judge0SubmissionResult[] = [];
-    while (true) {
+    let attempts = 0;
+    const maxAttempts = 30;
+
+    while (attempts < maxAttempts) {
       const res = await axios.get(
-        `${JUDGE0_API}/submissions/batch?tokens=${tokens.join(",")}&base64_encoded=false`,
+        `${JUDGE0_API}/submissions/batch?tokens=${tokens.join(
+          ","
+        )}&base64_encoded=false`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -96,24 +178,73 @@ export async function POST(req: NextRequest) {
       );
 
       resultsData = res.data.submissions;
-      const allDone = resultsData.every((r) => r.status.id >= 3);
+      const allDone = resultsData.every(
+        (r: Judge0SubmissionResult) => r.status.id >= 3
+      );
       if (allDone) break;
 
-      await new Promise((r) => setTimeout(r, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      attempts++;
     }
 
-    // Check all results for success
-    const allAccepted = resultsData.every(
-      (r) => r.status.description === "Accepted"
+    console.log("Raw result from Judge0:", resultsData);
+
+    // Process results with enhanced comparison (same as run endpoint)
+    const processedResults = resultsData.map((r, idx) => {
+      const rawUserOutput = (r.stdout || "").trim();
+      const expectedOutput = (testCases[idx].output || "").trim();
+
+      console.log(`Test case ${idx}:`);
+      console.log(`Raw user output: "${rawUserOutput}"`);
+      console.log(`Expected output: "${expectedOutput}"`);
+
+      let finalStatus = r.status;
+
+      // Only override status if it's "Accepted" or "Wrong Answer"
+      if (r.status.id === 4 || r.status.id === 3) {
+        const isCorrect = compareOutputs(rawUserOutput, expectedOutput);
+
+        if (isCorrect) {
+          finalStatus = { id: 3, description: "Accepted" };
+        } else {
+          finalStatus = { id: 4, description: "Wrong Answer" };
+        }
+
+        console.log(`Comparison result: ${isCorrect ? "PASS" : "FAIL"}`);
+      }
+
+      return {
+        input: testCases[idx].input,
+        output: testCases[idx].output,
+        result: {
+          ...r,
+          status: finalStatus,
+          user_output_lines: normalizeOutputArray(rawUserOutput),
+          expected_output_lines: normalizeOutputArray(expectedOutput),
+          raw_output: rawUserOutput,
+        },
+      };
+    });
+
+    // Check if ALL test cases passed for submit endpoint
+    const allAccepted = processedResults.every(
+      (result) => result.result.status.description === "Accepted"
     );
 
-    if (!allAccepted) {
-      return NextResponse.json({ success: false, results: resultsData });
-    }
-
-    return NextResponse.json({ success: true, results: resultsData });
-
+    return NextResponse.json({
+      success: allAccepted,
+      results: processedResults,
+      message: allAccepted
+        ? "All test cases passed!"
+        : `${
+            processedResults.filter(
+              (r) => r.result.status.description === "Accepted"
+            ).length
+          }/${processedResults.length} test cases passed`,
+    });
   } catch (err: unknown) {
+    console.error("Error in code execution:", err);
+
     if (err instanceof Error) {
       console.error("Error running code:", err.message);
       return NextResponse.json(
@@ -121,6 +252,7 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
+
     return NextResponse.json(
       { success: false, error: "Something went wrong." },
       { status: 500 }
