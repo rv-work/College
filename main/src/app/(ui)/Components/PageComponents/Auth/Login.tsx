@@ -4,8 +4,8 @@ import { useRouter } from "nextjs-toploader/app";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-import { 
-  Mail, Lock, ArrowRight, Loader2
+import {
+  Mail, Lock, ArrowRight, Loader2, TestTube
 } from "lucide-react";
 import { useAuth } from "@/app/Context/AuthContext";
 import Redirect from "./Redirect";
@@ -33,7 +33,7 @@ const Login = () => {
       const res = await axios.post("/api/auth/login", formData, {
         withCredentials: true,
       });
-      
+
       if (res.data.success) {
         toast.success("Logged in Successfully");
         setIsLoggedIn(true);
@@ -52,11 +52,16 @@ const Login = () => {
     }
   };
 
-
+  const handleTestLogin = (username: string, password: string) => {
+    setFormData({
+      emailOrUsername: username,
+      password: password
+    });
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -71,6 +76,48 @@ const Login = () => {
             Welcome to 100x<span className="text-blue-700">Code</span>
           </h2>
           <p className="text-center text-gray-400 mb-6">Sign in to continue your journey</p>
+        </motion.div>
+
+        {/* Test Credentials Section */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="mb-6 p-4 bg-blue-900/20 rounded-lg border border-blue-500/30"
+        >
+          <div className="flex items-center justify-center mb-3">
+            <TestTube className="h-4 w-4 text-blue-400 mr-2" />
+            <h4 className="text-sm font-semibold text-blue-300">Test Platform</h4>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-xs">
+              <div className="flex space-x-4">
+                <span className="text-gray-400">Username: <span className="text-blue-300">user1</span></span>
+                <span className="text-gray-400">Password: <span className="text-blue-300">12345678</span></span>
+              </div>
+              <button
+                onClick={() => handleTestLogin("user1", "12345678")}
+                className="text-blue-400 hover:text-blue-300 underline text-xs"
+              >
+                Use
+              </button>
+            </div>
+            <div className="flex justify-between items-center text-xs">
+              <div className="flex space-x-4">
+                <span className="text-gray-400">Username: <span className="text-blue-300">user2</span></span>
+                <span className="text-gray-400">Password: <span className="text-blue-300">12345678</span></span>
+              </div>
+              <button
+                onClick={() => handleTestLogin("user2", "12345678")}
+                className="text-blue-400 hover:text-blue-300 underline text-xs"
+              >
+                Use
+              </button>
+            </div>
+          </div>
+          <p className="text-xs text-gray-400 text-center mt-2">
+            Click &quot;Use&quot; to auto-fill credentials
+          </p>
         </motion.div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -119,7 +166,7 @@ const Login = () => {
           </motion.div>
 
           {error && (
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-red-500 text-center text-sm bg-red-500/10 p-2 rounded-md"
@@ -134,11 +181,10 @@ const Login = () => {
             transition={{ delay: 0.4 }}
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg shadow-lg flex items-center justify-center space-x-2 font-semibold text-lg transition-all duration-300 ${
-              loading
-                ? "bg-gray-700 cursor-not-allowed"
-                : "bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-500 hover:to-blue-700 hover:shadow-blue-500/20 hover:shadow-lg"
-            }`}
+            className={`w-full py-3 rounded-lg shadow-lg flex items-center justify-center space-x-2 font-semibold text-lg transition-all duration-300 ${loading
+              ? "bg-gray-700 cursor-not-allowed"
+              : "bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-500 hover:to-blue-700 hover:shadow-blue-500/20 hover:shadow-lg"
+              }`}
           >
             {loading ? (
               <>
