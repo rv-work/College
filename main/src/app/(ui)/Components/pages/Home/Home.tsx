@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const Home = () => {
   const [scrolled, setScrolled] = useState(false);
-  
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -17,46 +17,45 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#00040e] to-[#050b20] text-white overflow-hidden">
-      {/* Navigation */}
-      {scrolled && 
-      <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-black/80 backdrop-blur-md shadow-lg" : "bg-transparent"}`}>
-        <div className="container mx-auto flex items-center justify-between p-4">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="relative w-10 h-10">
-              <div className="absolute inset-0 bg-blue-600 rounded-lg rotate-45 transform-gpu"></div>
-              <div className="absolute inset-1 bg-[#050b20] rounded-lg rotate-45 transform-gpu flex items-center justify-center">
-                <span className="text-blue-500 font-bold text-xl">&lt;/&gt;</span>
+      {scrolled &&
+        <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-black/80 backdrop-blur-md shadow-lg" : "bg-transparent"}`}>
+          <div className="container mx-auto flex items-center justify-between p-4">
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="relative w-10 h-10">
+                <div className="absolute inset-0 bg-blue-600 rounded-lg rotate-45 transform-gpu"></div>
+                <div className="absolute inset-1 bg-[#050b20] rounded-lg rotate-45 transform-gpu flex items-center justify-center">
+                  <span className="text-blue-500 font-bold text-xl">&lt;/&gt;</span>
+                </div>
               </div>
+              <span className="text-2xl font-bold">100x<span className="text-blue-600">Code</span></span>
+            </Link>
+
+            <nav className="hidden md:flex items-center space-x-8">
+              <NavLink href="#features">Features</NavLink>
+              <NavLink href="#classroom">Classroom</NavLink>
+              <NavLink href="#events">Events</NavLink>
+              <NavLink href="#dsa">DSA Track</NavLink>
+              <NavLink href="#resources">Resources</NavLink>
+            </nav>
+
+            <div className="flex items-center space-x-4">
+              <button className="hidden md:block px-5 py-2 bg-transparent border border-blue-500 text-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition-all duration-300">
+                Log In
+              </button>
+              <button className="px-5 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all duration-300 flex items-center">
+                Sign Up <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </button>
+              <button className="md:hidden">
+                <div className="w-6 h-6 text-white">
+                  <MenuIcon />
+                </div>
+              </button>
             </div>
-            <span className="text-2xl font-bold">100x<span className="text-blue-600">Code</span></span>
-          </Link>
-          
-          <nav className="hidden md:flex items-center space-x-8">
-            <NavLink href="#features">Features</NavLink>
-            <NavLink href="#classroom">Classroom</NavLink>
-            <NavLink href="#events">Events</NavLink>
-            <NavLink href="#dsa">DSA Track</NavLink>
-            <NavLink href="#resources">Resources</NavLink>
-          </nav>
-          
-          <div className="flex items-center space-x-4">
-            <button className="hidden md:block px-5 py-2 bg-transparent border border-blue-500 text-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition-all duration-300">
-              Log In
-            </button>
-            <button className="px-5 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all duration-300 flex items-center">
-              Sign Up <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </button>
-            <button className="md:hidden">
-              <div className="w-6 h-6 text-white">
-                <MenuIcon />
-              </div>
-            </button>
           </div>
-        </div>
-      </header>
-}
+        </header>
+      }
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-32">
@@ -97,7 +96,7 @@ const Home = () => {
                   Watch Demo
                 </button>
               </div>
-              
+
               {/* Stats */}
               <div className="flex flex-wrap mt-12 gap-8">
                 <div>
@@ -115,7 +114,7 @@ const Home = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="md:w-1/2 relative">
             <div className="relative z-10 bg-gradient-to-br from-blue-600/10 to-purple-600/10 p-2 rounded-2xl backdrop-blur-sm border border-blue-800/30 shadow-2xl">
               <div className="rounded-xl overflow-hidden relative">
@@ -128,17 +127,17 @@ const Home = () => {
                   <div className="ml-4 text-sm text-gray-400">Collaborative Coding Session</div>
                 </div>
                 <div className="pt-12">
-                  <Image 
-                    src="/codeClass.png" 
-                    alt="Collaborative Coding" 
-                    width={1200} 
+                  <Image
+                    src="/codeClass.png"
+                    alt="Collaborative Coding"
+                    width={1200}
                     height={800}
                     className="w-full h-auto"
                   />
                 </div>
               </div>
             </div>
-            
+
             {/* Decorative elements */}
             <div className="absolute -top-20 -right-20 w-64 h-64 bg-blue-600 rounded-full opacity-20 filter blur-3xl"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-600 rounded-full opacity-20 filter blur-3xl"></div>
@@ -154,7 +153,7 @@ const Home = () => {
             title="Everything You Need to Excel in Coding"
             description="Our platform offers comprehensive tools to help you learn, practice, and collaborate with others on your coding journey."
           />
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
             <FeatureCard
               icon={<CodeIcon />}
@@ -198,10 +197,10 @@ const Home = () => {
             <div className="lg:w-1/2 order-2 lg:order-1">
               <div className="relative">
                 <div className="relative z-10 bg-gradient-to-br from-blue-900/30 to-purple-900/30 p-2 rounded-2xl backdrop-blur-sm border border-blue-800/50 shadow-2xl">
-                  <Image 
-                    src="/codeClass.png" 
-                    alt="Collaborative Classroom" 
-                    width={1200} 
+                  <Image
+                    src="/codeClass.png"
+                    alt="Collaborative Classroom"
+                    width={1200}
                     height={800}
                     className="w-full h-auto rounded-xl"
                   />
@@ -214,7 +213,7 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="lg:w-1/2 order-1 lg:order-2">
               <div className="inline-block px-4 py-2 bg-blue-900/30 rounded-full text-blue-400 font-medium text-sm mb-6 backdrop-blur-sm border border-blue-800/50">
                 Collaborative Learning
@@ -225,7 +224,7 @@ const Home = () => {
               <p className="text-gray-300 mb-8">
                 Our virtual classroom environment enables teachers and students to code together in real-time. Share screens, provide instant feedback, and solve problems collaboratively. The integrated chat system allows for seamless communication while the host maintains complete control over the session.
               </p>
-              
+
               <div className="space-y-4">
                 <FeatureItem text="Real-time code editing with syntax highlighting" />
                 <FeatureItem text="Integrated chat for seamless communication" />
@@ -233,7 +232,7 @@ const Home = () => {
                 <FeatureItem text="Host controls for managing participants" />
                 <FeatureItem text="Screen sharing and annotation tools" />
               </div>
-              
+
               <button className="mt-8 px-8 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all duration-300 font-medium flex items-center">
                 Try Classroom <span className="ml-2 w-5 h-5"><ArrowRightIcon /></span>
               </button>
@@ -256,7 +255,7 @@ const Home = () => {
               <p className="text-gray-300 mb-8">
                 Our event management system allows you to create, manage, and participate in various coding events. From hackathons to workshops, register with just a few clicks and get timely reminders. Event hosts can track attendance, manage registrations, and analyze engagement metrics.
               </p>
-              
+
               <div className="space-y-4">
                 <FeatureItem text="One-click event registration" />
                 <FeatureItem text="Event reminders and notifications" />
@@ -264,19 +263,19 @@ const Home = () => {
                 <FeatureItem text="Certificate generation for participants" />
                 <FeatureItem text="Post-event feedback collection" />
               </div>
-              
+
               <button className="mt-8 px-8 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-all duration-300 font-medium flex items-center">
                 Browse Events <span className="ml-2 w-5 h-5"><ArrowRightIcon /></span>
               </button>
             </div>
-            
+
             <div className="lg:w-1/2">
               <div className="relative">
                 <div className="relative z-10 bg-gradient-to-br from-purple-900/30 to-blue-900/30 p-2 rounded-2xl backdrop-blur-sm border border-purple-800/50 shadow-2xl">
-                  <Image 
-                    src="/image.png" 
-                    alt="Event Management" 
-                    width={1200} 
+                  <Image
+                    src="/image.png"
+                    alt="Event Management"
+                    width={1200}
                     height={800}
                     className="w-full h-auto rounded-xl"
                   />
@@ -296,10 +295,10 @@ const Home = () => {
             <div className="lg:w-1/2 order-2 lg:order-1">
               <div className="relative">
                 <div className="relative z-10 bg-gradient-to-br from-green-900/30 to-blue-900/30 p-2 rounded-2xl backdrop-blur-sm border border-green-800/50 shadow-2xl">
-                  <Image 
-                    src="/quiz.png" 
-                    alt="Video-Based Quizzes" 
-                    width={1200} 
+                  <Image
+                    src="/quiz.png"
+                    alt="Video-Based Quizzes"
+                    width={1200}
                     height={800}
                     className="w-full h-auto rounded-xl"
                   />
@@ -307,7 +306,7 @@ const Home = () => {
                 <div className="absolute -bottom-6 -right-6 w-full h-full bg-gradient-to-br from-green-600 to-blue-600 rounded-2xl -z-10 opacity-20 blur-lg"></div>
               </div>
             </div>
-            
+
             <div className="lg:w-1/2 order-1 lg:order-2">
               <div className="inline-block px-4 py-2 bg-green-900/30 rounded-full text-green-400 font-medium text-sm mb-6 backdrop-blur-sm border border-green-800/50">
                 Interactive Learning
@@ -318,7 +317,7 @@ const Home = () => {
               <p className="text-gray-300 mb-8">
                 Enhance your learning by transforming any YouTube coding tutorial into an interactive quiz. Simply paste a video link, and our system will generate questions based on the content. Test your understanding immediately after watching to reinforce your knowledge.
               </p>
-              
+
               <div className="space-y-4">
                 <FeatureItem text="AI-generated questions from video content" />
                 <FeatureItem text="Instant feedback on your answers" />
@@ -326,7 +325,7 @@ const Home = () => {
                 <FeatureItem text="Share quizzes with friends and classmates" />
                 <FeatureItem text="Create custom quizzes for specific videos" />
               </div>
-              
+
               <button className="mt-8 px-8 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-all duration-300 font-medium flex items-center">
                 Try Video Quizzes <span className="ml-2 w-5 h-5"><ArrowRightIcon /></span>
               </button>
@@ -349,7 +348,7 @@ const Home = () => {
               <p className="text-gray-300 mb-8">
                 Master Data Structures and Algorithms with our comprehensive DSA tracker. Solve problems of varying difficulty levels, track your progress, and receive AI-powered recommendations to improve your code. Build a strong foundation for technical interviews and competitive programming.
               </p>
-              
+
               <div className="space-y-4">
                 <FeatureItem text="500+ curated DSA problems with solutions" />
                 <FeatureItem text="AI-powered code analysis and feedback" />
@@ -357,19 +356,19 @@ const Home = () => {
                 <FeatureItem text="Time and space complexity analysis" />
                 <FeatureItem text="Interview preparation roadmaps" />
               </div>
-              
+
               <button className="mt-8 px-8 py-3 bg-cyan-600 text-white rounded-full hover:bg-cyan-700 transition-all duration-300 font-medium flex items-center">
                 Start Solving <span className="ml-2 w-5 h-5"><ArrowRightIcon /></span>
               </button>
             </div>
-            
+
             <div className="lg:w-1/2">
               <div className="relative">
                 <div className="relative z-10 bg-gradient-to-br from-cyan-900/30 to-blue-900/30 p-2 rounded-2xl backdrop-blur-sm border border-cyan-800/50 shadow-2xl">
-                  <Image 
-                    src="/dsa.png" 
-                    alt="DSA Progress Tracking" 
-                    width={1200} 
+                  <Image
+                    src="/dsa.png"
+                    alt="DSA Progress Tracking"
+                    width={1200}
                     height={800}
                     className="w-full h-auto rounded-xl"
                   />
@@ -390,7 +389,7 @@ const Home = () => {
             title="Comprehensive Learning Materials"
             description="Access a vast library of study materials, including PYQs, notes, tests, and coding resources to excel in your academic journey."
           />
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
             <ResourceCard
               icon={<DocumentIcon />}
@@ -417,7 +416,7 @@ const Home = () => {
               color="amber"
             />
           </div>
-          
+
           <div className="mt-16 text-center">
             <button className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full transition-all duration-300 font-medium flex items-center mx-auto">
               Browse All Resources <span className="ml-2 w-5 h-5"><ArrowRightIcon /></span>
@@ -434,7 +433,7 @@ const Home = () => {
             title="What Our Users Say"
             description="Hear from students and teachers who have transformed their coding education experience with 100xCode."
           />
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
             <TestimonialCard
               content="The collaborative classroom feature has completely changed how I teach coding. My students can now work together seamlessly, and I can provide real-time feedback."
@@ -503,7 +502,7 @@ const Home = () => {
                 <SocialIcon icon={<LinkedinIcon />} />
               </div>
             </div>
-            
+
             <div>
               <h3 className="text-lg font-semibold mb-4">Platform</h3>
               <ul className="space-y-2 text-gray-400">
@@ -514,7 +513,7 @@ const Home = () => {
                 <FooterLink href="#resources">Resources</FooterLink>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="text-lg font-semibold mb-4">Company</h3>
               <ul className="space-y-2 text-gray-400">
@@ -525,7 +524,7 @@ const Home = () => {
                 <FooterLink href="/blog">Blog</FooterLink>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="text-lg font-semibold mb-4">Legal</h3>
               <ul className="space-y-2 text-gray-400">
@@ -536,7 +535,7 @@ const Home = () => {
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-500 text-sm">© 2025 100xCode. All rights reserved.</p>
             <div className="mt-4 md:mt-0">
@@ -549,7 +548,7 @@ const Home = () => {
           </div>
         </div>
       </footer>
-      
+
       {/* Scroll to top button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -625,7 +624,7 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ icon, title, count, color }
     green: "from-green-900/30 to-green-900/10 border-green-800/50 text-green-400 hover:border-green-500/50",
     amber: "from-amber-900/30 to-amber-900/10 border-amber-800/50 text-amber-400 hover:border-amber-500/50"
   };
-  
+
   return (
     <div className={`bg-gradient-to-br ${colorClasses[color]} backdrop-blur-sm p-6 rounded-xl border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 text-center h-full flex flex-col items-center justify-center`}>
       <div className="mb-4 text-4xl">
@@ -653,10 +652,10 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ content, name, role, 
     <p className="text-gray-300 mb-6 italic">{content}</p>
     <div className="flex items-center">
       <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
-        <Image 
-          src={avatar} 
-          alt={name} 
-          width={40} 
+        <Image
+          src={avatar}
+          alt={name}
+          width={40}
           height={40}
           className="w-full h-full object-cover"
         />
