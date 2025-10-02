@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "nextjs-toploader/app";
 
 const Home = () => {
   const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,15 +41,21 @@ const Home = () => {
             </nav>
 
             <div className="flex items-center space-x-4">
-              <button className="hidden md:block px-5 py-2 bg-transparent border border-blue-500 text-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition-all duration-300">
+              <button
+                onClick={() => router.push("/auth/login")}
+                className="hidden md:block px-5 py-2 bg-transparent border border-blue-500 text-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition-all duration-300">
                 Log In
               </button>
-              <button className="px-5 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all duration-300 flex items-center">
+              <button
+                onClick={() => router.push("/auth/signup")}
+                className="px-5 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all duration-300 flex items-center">
                 Sign Up <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </button>
-              <button className="md:hidden">
+              <button
+                onClick={() => router.push("/auth/signup")}
+                className="md:hidden">
                 <div className="w-6 h-6 text-white">
                   <MenuIcon />
                 </div>
