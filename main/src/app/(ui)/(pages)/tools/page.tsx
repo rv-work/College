@@ -8,33 +8,32 @@ import {
   BookOpenCheck,
   Video,
 } from 'lucide-react';
-import toast from 'react-hot-toast';
 
 type Tool = {
   label: string;
-  value: 'pdf' | 'test-quiz' | 'pdf-summary' | 'video-summary';
+  value: 'youtube-pdf' | 'youtube-quiz' | 'pdf-quiz' | 'rag-chat';
   icon: React.ReactNode;
 };
 
 const tools: Tool[] = [
   {
     label: 'PDF Extractor',
-    value: 'pdf',
+    value: 'youtube-pdf',
     icon: <FileText className="w-5 h-5 mr-2" />,
   },
   {
-    label: 'Quiz Generator',
-    value: 'test-quiz',
+    label: 'Youtube Quiz Generator',
+    value: 'youtube-quiz',
     icon: <BookOpenCheck className="w-5 h-5 mr-2" />,
   },
   {
-    label: 'PDF Summarizer',
-    value: 'pdf-summary',
+    label: 'PDF Quiz Generator',
+    value: 'pdf-quiz',
     icon: <FileSearch className="w-5 h-5 mr-2" />,
   },
   {
-    label: 'Video Summarizer',
-    value: 'video-summary',
+    label: 'PDF Chat',
+    value: 'rag-chat',
     icon: <Video className="w-5 h-5 mr-2" />,
   },
 ];
@@ -43,16 +42,12 @@ export default function ToolSwitcher() {
   const [view, setView] = useState<Tool['value'] | ''>('');
   const router = useRouter();
 
-const handleViewChange = (newView: Tool['value']) => {
-  setView(newView);
+  const handleViewChange = (newView: Tool['value']) => {
+    setView(newView);
 
-  if (newView === 'pdf-summary' || newView === 'video-summary') {
-    toast.error('This feature is not available yet.');
-    return;
-  }
 
-  router.push(`/youtube/${newView}`);
-};
+    router.push(`/tools/${newView}`);
+  };
 
 
   return (
@@ -95,11 +90,10 @@ function ToolButton({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center px-6 py-3 rounded-xl font-semibold text-base md:text-lg transition-all duration-300 border ${
-        active
-          ? 'bg-blue-700 text-white shadow-xl border-blue-500'
-          : 'bg-gradient-to-br from-blue-900 via-blue-800 to-gray-800 text-blue-300 hover:scale-105 hover:shadow-lg border-blue-600/30'
-      }`}
+      className={`flex items-center px-6 py-3 rounded-xl font-semibold text-base md:text-lg transition-all duration-300 border ${active
+        ? 'bg-blue-700 text-white shadow-xl border-blue-500'
+        : 'bg-gradient-to-br from-blue-900 via-blue-800 to-gray-800 text-blue-300 hover:scale-105 hover:shadow-lg border-blue-600/30'
+        }`}
     >
       {icon}
       {label}
