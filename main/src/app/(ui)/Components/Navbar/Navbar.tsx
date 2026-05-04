@@ -1,17 +1,17 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { FaRegUserCircle , FaYoutube  } from "react-icons/fa";
+import { FaRegUserCircle, FaTools } from "react-icons/fa";
 
-import { 
-  Home, 
-  GraduationCap, 
-  CalendarCheck, 
-  BookOpen, 
-  LogIn, 
-  User, 
-  LogOut, 
-  Calendar ,
+import {
+  Home,
+  GraduationCap,
+  CalendarCheck,
+  BookOpen,
+  LogIn,
+  User,
+  LogOut,
+  Calendar,
 } from "lucide-react";
 import axios from "axios";
 import { usePathname } from "next/navigation";
@@ -28,7 +28,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const {isLoggedIn , setIsLoggedIn} = useAuth()
+  const { isLoggedIn, setIsLoggedIn } = useAuth()
 
   const checkAuth = async () => {
     try {
@@ -36,7 +36,7 @@ const Navbar = () => {
       if (res.data?.success) {
         setIsLoggedIn(true);
       }
-    } catch (error : unknown) {
+    } catch (error: unknown) {
       const err = error as { response: { status: number } };
       console.error("Auth check failed:", err);
       setIsLoggedIn(false);
@@ -45,7 +45,7 @@ const Navbar = () => {
 
   useEffect(() => {
     checkAuth();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -76,7 +76,7 @@ const Navbar = () => {
     { href: "/dsa", label: "DSA", icon: GraduationCap },
     { href: "/events", label: "Events", icon: CalendarCheck },
     { href: "/sources", label: "Sources", icon: BookOpen },
-    { href: "/youtube", label: "Youtube", icon:  FaYoutube  }
+    { href: "/tools", label: "Tools", icon: FaTools }
   ];
 
   const isActive = (path: string) => {
@@ -86,7 +86,7 @@ const Navbar = () => {
   };
 
   return (
-    <motion.nav 
+    <motion.nav
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -94,7 +94,7 @@ const Navbar = () => {
     >
       <div className="flex items-center justify-between max-w-screen-xl mx-auto">
         {/* Logo */}
-        <motion.div 
+        <motion.div
           whileHover={{ scale: 1.05 }}
           className="flex items-center"
         >
@@ -104,7 +104,7 @@ const Navbar = () => {
         </motion.div>
 
         {/* Navigation Links */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="bg-[#17171790] py-4 px-8 border border-white/10 rounded-full hidden md:flex space-x-8 shadow-lg shadow-blue-500/20"
@@ -112,22 +112,21 @@ const Navbar = () => {
           {navLinks.map((link) => {
             const active = isActive(link.href);
             return (
-              <motion.div 
+              <motion.div
                 key={link.href}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 className="relative"
               >
-                <Link 
-                  href={link.href} 
-                  className={`flex items-center space-x-2 transition-colors duration-300 ${
-                    active ? 'text-blue-500 font-semibold' : 'text-white hover:text-blue-400'
-                  }`}
+                <Link
+                  href={link.href}
+                  className={`flex items-center space-x-2 transition-colors duration-300 ${active ? 'text-blue-500 font-semibold' : 'text-white hover:text-blue-400'
+                    }`}
                 >
                   <link.icon size={18} className={active ? "text-blue-500" : ""} />
                   <span>{link.label}</span>
                   {active && (
-                    <motion.div 
+                    <motion.div
                       layoutId="activeIndicator"
                       className="absolute -bottom-2 left-0 right-0 h-0.5 bg-blue-500 rounded-full"
                       initial={{ opacity: 0 }}
@@ -149,14 +148,14 @@ const Navbar = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <FaRegUserCircle 
+                <FaRegUserCircle
                   size={32}
                   className="cursor-pointer text-blue-500 hover:text-blue-700 rounded-full transition-all duration-300 ease-in-out"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 />
               </motion.div>
               {dropdownOpen && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="absolute right-0 mt-2 w-48 bg-[#171717] shadow-lg rounded-md py-2 z-50"

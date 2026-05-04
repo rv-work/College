@@ -1,33 +1,33 @@
 import React from 'react'
 import { motion, AnimatePresence } from "framer-motion";
-import {  X, User, Calendar, Code, BookOpen, Zap, UserPlus, Gift, Heart } from "lucide-react";
+import { X, User, Calendar, Code, BookOpen, Zap, UserPlus, Gift, Heart } from "lucide-react";
 import { useAuth } from '@/app/Context/AuthContext';
 import { useRouter } from "nextjs-toploader/app";
 
-const Redirect = ({showDestinationModal , setShowDestinationModal} : {showDestinationModal : boolean , setShowDestinationModal : (showDestinationModal : boolean) => void}) => {
+const Redirect = ({ showDestinationModal, setShowDestinationModal }: { showDestinationModal: boolean, setShowDestinationModal: (showDestinationModal: boolean) => void }) => {
 
-   const router = useRouter();
-   const { setGoto } = useAuth();
+  const router = useRouter();
+  const { setGoto } = useAuth();
 
-   
-    const handleDestinationSelect = (destination: string) => {
-      setGoto(destination);
-      setShowDestinationModal(false);
-      router.push(`/${destination}`);
-    };
-  
-    const destinations = [
-      { id: "profile", name: "My Profile", icon: <User className="w-6 h-6" /> },
-      { id: "events", name: "Events", icon: <Gift className="w-6 h-6" /> },
-  
-      { id: "dsa", name: "DSA/Code", icon: <Code className="w-6 h-6" /> },
-      { id: "source", name: "Source", icon: <BookOpen className="w-6 h-6" /> },
-      { id: "profile/my-events", name: "My Events", icon: <Calendar className="w-6 h-6" /> },
-  
-      { id: "youtube", name: "Youtube Hub", icon: <Zap className="w-6 h-6" /> },
-      { id: "events/host", name: "Host an Event", icon: <UserPlus className="w-6 h-6" /> },
-      { id: "sources/contribute", name: "Contribute", icon: <Heart className="w-6 h-6" /> },
-    ];
+
+  const handleDestinationSelect = (destination: string) => {
+    setGoto(destination);
+    setShowDestinationModal(false);
+    router.push(`/${destination}`);
+  };
+
+  const destinations = [
+    { id: "profile", name: "My Profile", icon: <User className="w-6 h-6" /> },
+    { id: "events", name: "Events", icon: <Gift className="w-6 h-6" /> },
+
+    { id: "dsa", name: "DSA/Code", icon: <Code className="w-6 h-6" /> },
+    { id: "source", name: "Source", icon: <BookOpen className="w-6 h-6" /> },
+    { id: "profile/my-events", name: "My Events", icon: <Calendar className="w-6 h-6" /> },
+
+    { id: "tools", name: "Tools Hub", icon: <Zap className="w-6 h-6" /> },
+    { id: "events/host", name: "Host an Event", icon: <UserPlus className="w-6 h-6" /> },
+    { id: "sources/contribute", name: "Contribute", icon: <Heart className="w-6 h-6" /> },
+  ];
 
 
 
@@ -42,7 +42,7 @@ const Redirect = ({showDestinationModal , setShowDestinationModal} : {showDestin
             exit={{ opacity: 0 }}
             className="fixed inset-0 flex items-center justify-center z-50 p-4"
           >
-            <motion.div 
+            <motion.div
               className="absolute inset-0 bg-blue-900/10 backdrop-blur-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -81,18 +81,18 @@ const Redirect = ({showDestinationModal , setShowDestinationModal} : {showDestin
             >
               <div className="relative h-screen w-screen overflow-y-auto">
                 {destinations.map((dest, index) => {
-                  const angle = (index / destinations.length) * Math.PI * 2; 
+                  const angle = (index / destinations.length) * Math.PI * 2;
                   const radius = 150; // Circle radius
                   const x = Math.cos(angle) * radius;
                   const y = Math.sin(angle) * radius;
-                  
+
                   return (
                     <motion.button
                       key={dest.id}
                       initial={{ opacity: 0, x, y }}
-                      animate={{ 
-                        opacity: 1, 
-                        x, 
+                      animate={{
+                        opacity: 1,
+                        x,
                         y,
                         transition: { delay: 0.3 + index * 0.1 }
                       }}

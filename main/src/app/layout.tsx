@@ -5,7 +5,7 @@ import NextTopLoader from 'nextjs-toploader';
 import AuthContextProvider from "./Context/AuthContext";
 import GlobalParticlesBackground from "./GlobalParticlesBackground";
 
-export default function RootLayout({ children ,}: Readonly<{ children: React.ReactNode; }>) {
+export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="en">
       <body className="bg-[#030711]">
@@ -14,13 +14,13 @@ export default function RootLayout({ children ,}: Readonly<{ children: React.Rea
           color="#3b82f6"
           showSpinner={false}
         />
-          <AuthContextProvider>
+        <AuthContextProvider>
           <GlobalParticlesBackground />
-            <Navbar />
-            {children}
-          </AuthContextProvider>
-  
-          <Toaster position="bottom-right" />
+          <Navbar />
+          {children}
+        </AuthContextProvider>
+
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );
